@@ -20,12 +20,12 @@ class VimeoFiles {
   VimeoFiles({this.progressive});
 
   factory VimeoFiles.fromJson(Map<String, dynamic> json) => VimeoFiles(
-        progressive: List<VimeoProgressive>.from(
-          json["progressive"].map(
+    progressive: List<VimeoProgressive>.from(
+      json["progressive"].map(
             (x) => VimeoProgressive.fromJson(x),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 
   List<VimeoProgressive?>? progressive;
 }
