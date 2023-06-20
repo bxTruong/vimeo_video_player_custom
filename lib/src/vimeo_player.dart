@@ -1,6 +1,6 @@
 import 'dart:developer';
-import 'package:chewie/chewie.dart';
 import 'package:dio/dio.dart';
+import 'package:flick_video_player_custom/flick_video_player_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
@@ -67,10 +67,7 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
   final VideoPlayerController _emptyVideoPlayerController = VideoPlayerController.network('');
 
   /// flick manager to manage the flick player
-
-  late ChewieController _chewieController;
-
-  // late BetterPlayerController _betterPlayerController;
+  FlickManager? _flickManager;
 
   /// used to notify that video is loaded or not
   ValueNotifier<bool> isVimeoVideoLoaded = ValueNotifier(false);
@@ -113,6 +110,7 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
   @override
   void dispose() {
     /// disposing the controllers
+    _flickManager?.dispose();
     _videoPlayerController?.dispose();
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.manual,
@@ -138,12 +136,12 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
   void _setVideoListeners() {
     final onProgressCallback = widget.onProgress;
     final onFinishCallback = widget.onFinished;
-    bool isFinish =false;
 
     if (_videoPlayerController != null && (onProgressCallback != null || onFinishCallback != null)) {
       _videoPlayerController!.addListener(() {
         final VideoPlayerValue videoData = _videoPlayerController!.value;
         if (videoData.isInitialized) {
+          // if (!isLooping) {
           if (videoData.isPlaying) {
             if (onProgressCallback != null) {
               onProgressCallback.call(videoData.position);
@@ -153,6 +151,16 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
               onFinishCallback.call();
             }
           }
+          // } else {
+          //   if (onProgressCallback != null) {
+          //     onProgressCallback.call(videoData.position);
+          //   }
+          //   if (videoData.duration.inSeconds <= videoData.position.inSeconds) {
+          //     if (onFinishCallback != null) {
+          //       onFinishCallback.call();
+          //     }
+          //   }
+          // }
         }
       });
     }
@@ -177,26 +185,15 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
       print('kkkkkkkkkkkk $vimeoMp4Video');
 
       _videoPlayerController = VideoPlayerController.network(vimeoMp4Video);
-      _videoPlayerController?.initialize().then((_) {
-        print('hhhhhhhhhhhhhhhgggggggggg ${_videoPlayerController?.value.duration}');
-        setState(
-          () => _chewieController = ChewieController(
-            videoPlayerController: _videoPlayerController ?? _emptyVideoPlayerController,
-            autoPlay: widget.autoPlay,
-            looping: widget.looping,
-            aspectRatio: _videoPlayerController?.value.aspectRatio,
-            additionalOptions: (context) => <OptionItem>[
-              OptionItem(
-                onTap: () => _onPressQualityOption(),
-                iconData: Icons.hd_outlined,
-                title: 'Quality',
-              ),
-            ],
-          ),
-        );
-      });
+
       _setVideoInitialPosition();
       _setVideoListeners();
+
+      _flickManager = FlickManager(
+          videoPlayerController: _videoPlayerController ?? _emptyVideoPlayerController,
+          autoPlay: widget.autoPlay,
+          additionalOptions: [OptionModel(name: 'Quality', icon: Icons.hd, onPressFeature: _onPressQualityOption)])
+        ..registerContext(context);
 
       isVimeoVideoLoaded.value = !isVimeoVideoLoaded.value;
     });
@@ -204,29 +201,16 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    print('hhhhhhhhhhhh ${_videoPlayerController?.value.aspectRatio}');
-
     return ValueListenableBuilder(
       valueListenable: isVimeoVideoLoaded,
       builder: (context, bool isVideo, child) => Container(
         child: isVideo
-            ? LayoutBuilder(
-                builder: (context, size) {
-                  double aspectRatio = (size.maxHeight == double.infinity || size.maxWidth == double.infinity)
-                      ? (_videoPlayerController?.value.isInitialized == true ? _videoPlayerController?.value.aspectRatio : (16 / 9))!
-                      : size.maxWidth / size.maxHeight;
-
-                  return AspectRatio(
-                    aspectRatio: aspectRatio,
-                    child: _videoPlayerController?.value.isInitialized == true
-                        ? Container(
-                            height: _videoPlayerController?.value.size.height,
-                            width: _videoPlayerController?.value.size.width,
-                            child: Chewie(key: ObjectKey(_chewieController), controller: _chewieController),
-                          )
-                        : Container(),
-                  );
-                },
+            ? FlickVideoPlayer(
+                key: ObjectKey(_flickManager),
+                flickManager: _flickManager ??
+                    FlickManager(
+                      videoPlayerController: _emptyVideoPlayerController,
+                    ),
               )
             : const Center(
                 child: CircularProgressIndicator(
@@ -291,19 +275,14 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
         builder: (context) => SheetQualityComp(vimeoProgressiveList: vimeoProgressiveList, vimeoProgressiveSelected: vimeoProgressiveSelected));
     if (response != null) {
       vimeoProgressiveSelected = response;
-      Duration? duration = await _chewieController.videoPlayerController.position;
-      _videoPlayerController = VideoPlayerController.network(vimeoProgressiveSelected?.url);
+      Duration? duration = await _flickManager?.flickVideoManager?.videoPlayerController?.position;
+      _videoPlayerController = VideoPlayerController.network(vimeoProgressiveSelected?.url)..seekTo(duration ?? const Duration(milliseconds: 0));
       _videoPlayerController?.initialize().then(
             (_) => setState(
-              () => _chewieController = ChewieController(
-                videoPlayerController: _videoPlayerController ?? _emptyVideoPlayerController,
-                autoPlay: widget.autoPlay,
-                looping: widget.looping,
-                aspectRatio: _videoPlayerController?.value.aspectRatio,
-                additionalOptions: (context) => <OptionItem>[
-                  OptionItem(onTap: () => _onPressQualityOption(), iconData: Icons.hd_outlined, title: 'Quality'),
-                ],
-              )..seekTo(duration ?? Duration(seconds: 0)),
+              () => _flickManager = FlickManager(
+                  videoPlayerController: _videoPlayerController ?? _emptyVideoPlayerController,
+                  autoPlay: widget.autoPlay,
+                  additionalOptions: [OptionModel(name: 'Quality', icon: Icons.hd, onPressFeature: _onPressQualityOption)]),
             ),
           );
       setState(() {});
