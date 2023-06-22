@@ -6,11 +6,7 @@ class SheetQualityComp extends StatefulWidget {
   final List<VimeoProgressive?> vimeoProgressiveList;
   final VimeoProgressive? vimeoProgressiveSelected;
 
-  const SheetQualityComp(
-      {Key? key,
-      required this.vimeoProgressiveList,
-      this.vimeoProgressiveSelected})
-      : super(key: key);
+  const SheetQualityComp({Key? key, required this.vimeoProgressiveList, this.vimeoProgressiveSelected}) : super(key: key);
 
   @override
   State<SheetQualityComp> createState() => _SheetQualityCompState();
@@ -34,20 +30,17 @@ class _SheetQualityCompState extends State<SheetQualityComp> {
           child: Row(
             children: [
               Visibility(
-                visible: widget.vimeoProgressiveSelected?.quality ==
-                    widget.vimeoProgressiveList[index]?.quality,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16),
+                visible: widget.vimeoProgressiveSelected?.quality == widget.vimeoProgressiveList[index]?.quality,
+                child: const Padding(
+                  padding: EdgeInsets.only(right: 16),
                   child: Icon(Icons.done, color: Colors.black),
                 ),
               ),
               Expanded(
-                  child: Text(widget.vimeoProgressiveList[index]?.quality ?? '',
+                  child: Text(widget.vimeoProgressiveList[index]?.quality?.toString() ?? 'null',
                       style: Theme.of(context).textTheme.bodyText2?.copyWith(
                           color: Colors.black,
-                          fontWeight: widget
-                                      .vimeoProgressiveSelected?.quality ==
-                                  widget.vimeoProgressiveList[index]?.quality
+                          fontWeight: widget.vimeoProgressiveSelected?.quality == widget.vimeoProgressiveList[index]?.quality
                               ? FontWeight.bold
                               : FontWeight.normal)))
             ],
@@ -56,6 +49,5 @@ class _SheetQualityCompState extends State<SheetQualityComp> {
         onTap: () => _onPressItemQuality(widget.vimeoProgressiveList[index]));
   }
 
-  void _onPressItemQuality(VimeoProgressive? vimeoProgressive) =>
-      Navigator.pop(context, vimeoProgressive);
+  void _onPressItemQuality(VimeoProgressive? vimeoProgressive) => Navigator.pop(context, vimeoProgressive);
 }
