@@ -30,7 +30,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,20 +37,20 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              VimeoVideoPlayer(
-                url: 'https://vimeo.com/157743578',
-                onFinished: () => onFinishedVimeo(),
-              ),
-              VimeoVideoPlayer(
-                url: 'https://vimeo.com/740663286',
-                onFinished: () => onFinishedVimeo(),
-              ),
-            ],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            VimeoVideoPlayer(
+              url: 'https://vimeo.com/157743578',
+              onFinished: () => onFinishedVimeo(),
+            ),
+            // Expanded(
+            //   child: VimeoVideoPlayer(
+            //     url: 'https://vimeo.com/740663286',
+            //     onFinished: () => onFinishedVimeo(),
+            //   ),
+            // ),
+          ],
         ),
       ),
     );

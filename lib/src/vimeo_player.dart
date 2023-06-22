@@ -7,6 +7,7 @@ import 'package:video_player/video_player.dart';
 
 import 'component/sheet_quality_comp.dart';
 import 'model/vimeo_video_config.dart';
+import 'package:collection/collection.dart';
 
 class VimeoVideoPlayer extends StatefulWidget {
   /// vimeo video url
@@ -170,19 +171,19 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
     /// getting the vimeo video configuration from api and setting managers
     _getVimeoVideoConfigFromUrl(widget.url).then((value) async {
       vimeoProgressiveList = value?.request?.files?.progressive ?? [];
-      var vimeoMp4Video = '';
+      vimeoProgressiveList.sort((a, b) => (a?.qualityInt ?? 0).compareTo((b?.qualityInt ?? 0)));
+      String vimeoMp4Video = '';
 
       if (vimeoProgressiveList.isNotEmpty) {
-        vimeoProgressiveList.map((element) {
-          if (element != null && element.url != null && element.url != '' && vimeoMp4Video == '') {
-            vimeoMp4Video = element.url ?? '';
-          }
-        }).toList();
+        String? video720 = vimeoProgressiveList.singleWhereOrNull((element) => element?.qualityInt == 720)?.url;
+        vimeoProgressiveSelected =
+            video720 != null ? vimeoProgressiveList.singleWhereOrNull((element) => element?.qualityInt == 720) : vimeoProgressiveList.last;
+
+        vimeoMp4Video = video720 ?? (vimeoProgressiveList.last?.url ?? '');
         if (vimeoMp4Video.isEmpty || vimeoMp4Video == '') {
           showAlertDialog(context);
         }
       }
-      print('kkkkkkkkkkkk $vimeoMp4Video');
 
       _videoPlayerController = VideoPlayerController.network(vimeoMp4Video);
 
@@ -192,7 +193,7 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
       _flickManager = FlickManager(
           videoPlayerController: _videoPlayerController ?? _emptyVideoPlayerController,
           autoPlay: widget.autoPlay,
-          additionalOptions: [OptionModel(name: 'Quality', icon: Icons.hd, onPressFeature: _onPressQualityOption)])
+          additionalOptions: [OptionModel(name: 'Quality', icon: Icons.hd_outlined, onPressFeature: () => _onPressQualityOption())])
         ..registerContext(context);
 
       isVimeoVideoLoaded.value = !isVimeoVideoLoaded.value;
@@ -201,6 +202,9 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    double? videoHeight = _videoPlayerController?.value.size.height;
+    double? videoWidth = _videoPlayerController?.value.size.width;
+
     return ValueListenableBuilder(
       valueListenable: isVimeoVideoLoaded,
       builder: (context, bool isVideo, child) => Container(
@@ -212,12 +216,27 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
                       videoPlayerController: _emptyVideoPlayerController,
                     ),
               )
-            : const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.grey,
-                  backgroundColor: Colors.white,
-                ),
-              ),
+            : LayoutBuilder(builder: (ctx, size) {
+                double aspectRatio = (size.maxHeight == double.infinity || size.maxWidth == double.infinity)
+                    ? (_videoPlayerController?.value.isInitialized == true ? _videoPlayerController?.value.aspectRatio : (16 / 9))!
+                    : size.maxWidth / size.maxHeight;
+                return AspectRatio(
+                  aspectRatio: aspectRatio,
+                  child: Container(
+                    height: videoHeight,
+                    width: videoWidth,
+                    decoration: const BoxDecoration(color: Colors.black),
+                    child: Center(
+                      child: Transform.scale(
+                        scale: 0.8,
+                        child: const CircularProgressIndicator(
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
       ),
     );
   }
@@ -273,20 +292,24 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
     dynamic response = await showModalBottomSheet(
         context: context,
         builder: (context) => SheetQualityComp(vimeoProgressiveList: vimeoProgressiveList, vimeoProgressiveSelected: vimeoProgressiveSelected));
-    if (response != null) {
-      vimeoProgressiveSelected = response;
-      Duration? duration = await _flickManager?.flickVideoManager?.videoPlayerController?.position;
-      _videoPlayerController = VideoPlayerController.network(vimeoProgressiveSelected?.url)..seekTo(duration ?? const Duration(milliseconds: 0));
-      _videoPlayerController?.initialize().then(
-            (_) => setState(
-              () => _flickManager = FlickManager(
-                  videoPlayerController: _videoPlayerController ?? _emptyVideoPlayerController,
-                  autoPlay: widget.autoPlay,
-                  additionalOptions: [OptionModel(name: 'Quality', icon: Icons.hd, onPressFeature: _onPressQualityOption)]),
-            ),
-          );
-      setState(() {});
-    }
+    if (response == null) return;
+    if (response == vimeoProgressiveSelected) return;
+    vimeoProgressiveSelected = response;
+    Duration? duration = await _flickManager?.flickVideoManager?.videoPlayerController?.position;
+    _videoPlayerController = VideoPlayerController.network(vimeoProgressiveSelected?.url ?? '');
+    isVimeoVideoLoaded.value = false;
+    await _videoPlayerController?.initialize();
+    _videoPlayerController?.seekTo(duration ?? const Duration(milliseconds: 0));
+    _flickManager = FlickManager(
+        videoPlayerController: _videoPlayerController ?? _emptyVideoPlayerController,
+        autoPlay: widget.autoPlay,
+        additionalOptions: [OptionModel(name: 'Quality', icon: Icons.hd, onPressFeature: () => _onPressQualityOption())]);
+    _flickManager?.flickVideoManager?.videoPlayerController?.play();
+    _flickManager?.flickVideoManager?._handleChangeVideo =_videoPlayerController;
+    _flickManager?.flickControlManager?.isFullscreen;
+    setState(() {});
+    await Future.delayed(const Duration(milliseconds: 500));
+    isVimeoVideoLoaded.value = true;
   }
 }
 
