@@ -319,30 +319,12 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
         await _flickManager?.flickVideoManager?.videoPlayerController?.position;
     _videoPlayerController =
         VideoPlayerController.network(vimeoProgressiveSelected?.url ?? '');
-    isVimeoVideoLoaded.value = false;
-    await _videoPlayerController?.initialize();
-    _videoPlayerController?.seekTo(duration ?? const Duration(milliseconds: 0));
-    // _flickManager = FlickManager(
-    //     videoPlayerController:
-    //         _videoPlayerController ?? _emptyVideoPlayerController,
-    //     autoPlay: widget.autoPlay,
-    //     additionalOptions: [
-    //       OptionModel(
-    //           name: 'Quality',
-    //           icon: Icons.hd,
-    //           onPressFeature: () => _onPressQualityOption())
-    //     ]);
-
     _flickManager?.handleChangeVideo(
-        _videoPlayerController ?? _emptyVideoPlayerController);
-    // _flickManager?.handleToggleFullscreen();
-    isVimeoVideoLoaded.value = true;
+        _videoPlayerController ?? _emptyVideoPlayerController,
+        videoChangeDuration:duration ,
+        isKeepValueVideo: true);
     _flickManager?.flickControlManager?.togglePlay();
-     // _flickManager?.flickControlManager?.play();
-
-    // _flickManager?.flickControlManager?.isFullscreen;
     setState(() {});
-    // await Future.delayed(const Duration(milliseconds: 500));
   }
 }
 

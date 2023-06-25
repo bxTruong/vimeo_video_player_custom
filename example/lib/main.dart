@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vimeo_video_player/vimeo_video_player.dart';
+import 'package:vimeo_video_player/vimeo_video_player_custom.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -44,12 +44,10 @@ class _MyHomePageState extends State<MyHomePage> {
               url: 'https://vimeo.com/157743578',
               onFinished: () => onFinishedVimeo(),
             ),
-            // Expanded(
-            //   child: VimeoVideoPlayer(
-            //     url: 'https://vimeo.com/740663286',
-            //     onFinished: () => onFinishedVimeo(),
-            //   ),
-            // ),
+            VimeoVideoPlayer(
+              url: 'https://vimeo.com/740663286',
+              onFinished: () => onFinishedVimeo(),
+            ),
           ],
         ),
       ),

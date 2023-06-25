@@ -1,6 +1,6 @@
-name: vimeo_video_player
+name: vimeo_video_player_custom
 description: A Video Player that support videos from Vimeo platform in Flutter. This Package allow us to play any videos from Vimeo by using its Vimeo Video Id.
-version: 0.0.10
+version: 0.0.1
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
@@ -15,7 +15,7 @@ dependencies:
 
   dio: ^5.2.0
   video_player: ^2.6.1
-  flick_video_player_custom: ^0.5.6
+  flick_video_player_custom: ^0.5.7
 
 dev_dependencies:
   flutter_test:

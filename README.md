@@ -1,85 +1,77 @@
-# vimeo_video_player
+# [**Based on Vimeo VIdeo Player**](https://pub.dev/packages/vimeo_video_player)
 
-<a href="https://flutter.dev/"><img src="https://img.shields.io/badge/flutter-website-deepskyblue.svg" alt="Flutter Website"></a>
-<a href="https://dart.dev"><img src="https://img.shields.io/badge/dart-website-deepskyblue.svg" alt="Dart Website"></a>
-<a href="https://developer.android.com" style="pointer-events: stroke;" target="_blank">
-<img src="https://img.shields.io/badge/platform-Android-deepskyblue">
-</a>
-<a href="https://developer.apple.com/ios/" style="pointer-events: stroke;" target="_blank">
-<img src="https://img.shields.io/badge/platform-iOS-deepskyblue">
-</a>
-<a href=""><img src="https://app.codacy.com/project/badge/Grade/dc683c9cc61b499fa7cdbf54e4d9ff35"/></a>
-<a href="https://github.com/Mindinventory/vimeo_video_player/blob/master/LICENSE" style="pointer-events: stroke;" target="_blank">
-<img src="https://img.shields.io/github/license/Mindinventory/vimeo_video_player"></a>
-<a href="https://pub.dev/packages/vimeo_video_player"><img src="https://img.shields.io/pub/v/vimeo_video_player?color=as&label=vimeo_video_player&logo=as1&logoColor=blue&style=social"></a>
-<a href="https://github.com/Mindinventory/vimeo_video_player"><img src="https://img.shields.io/github/stars/Mindinventory/vimeo_video_player?style=social" alt="MIT License"></a>
+# Features Custom
 
-A Video Player For Vimeo Videos in Flutter.
-This plugin allow us to play video from vimeo and it's supports Android and iOS platforms.
+* Use library [flick_video_player_custom](https://pub.dev/packages/flick_video_player_custom)
+* Change video quality (Default quality 720p or Highest quality)
+* Change playback speed
+* Overlay opens when touching video
 
-## Key Features
-* easy way to play vimeo video in video player.
 
-# Preview
-![vimeo_video_player](https://github.com/mi-ghanshyam/vimeo_video_player/blob/master/assets/vimeo.gif)
+# Demo Mobile
+![img](assets/1.JPEG)
+![img](assets/2.JPEG)
+![img](assets/3.JPEG)
 
-## Basic Usage
-
-Import it to your project file
-
-```dart
-import 'package:vimeo_video_player/vimeo_video_player.dart';
-```
-
-And add it in its most basic form like it:
-```dart
-VimeoVideoPlayer(
-  url: 'https://vimeo.com/70591644',
-);
-```
-
-### Required parameters of VimeoVideoPlayer
-------------
-| Parameter  | Description                         |
-|------------|-------------------------------------|
-| String url | the string url of valid vimeo video |
-
-### Optional parameters of VimeoVideoPlayer
-------------
-| Parameter                                | Description                                                                             |
-|------------------------------------------|-----------------------------------------------------------------------------------------|
-| List<SystemUiOverlay> systemUiOverlay    | top-bottom overlay to hide/show status bars                                             |
-| DeviceOrientation deviceOrientation      | deviceOrientation of video view                                                         |
-| Duration? startAt                        | video will have initial position set to given minute/second                             |
-| Function(Duration timePoint)? onProgress | it will be called periodically with current video position (approximately every 500 ms) |
-| VoidCallback? onFinished                 | it will be called when video finishes playback                                          |
-| bool autoPlay                            | to auto-play the video once initialized                                                 |
-
-### Dependencies
+# Dependencies
 
 * [dio](https://pub.dev/packages/dio): ^5.2.0
-* [flick_video_player](https://pub.dev/packages/flick_video_player): ^0.5.0
 * [video_player](https://pub.dev/packages/video_player): ^2.6.1
+* [flick_video_player_custom](https://pub.dev/packages/flick_video_player_custom): ^0.5.7
 
-### Guideline for contributors
-------------
-* Contribution towards our repository is always welcome, we request contributors to create a pull request for development.
+### Installation
 
-### Guideline to report an issue/feature request
-------------
-It would be great for us if the reporter can share the below things to understand the root cause of the issue.
+Add the following dependencies in your pubspec.yaml file of your flutter project.
 
-* Library version
-* Code snippet
-* Logs if applicable
-* Device specification like (Manufacturer, OS version, etc)
-* Screenshot/video with steps to reproduce the issue
-* Library used
+```dart
+vimeo_video_player_custom: <latest_version>
+```
 
-LICENSE!
-------------
-**vimeo_video_player** is [MIT-licensed.](https://github.com/Mindinventory/vimeo_video_player/blob/master/LICENSE)
+# How to use
 
-Let us know!
-------------
-We’d be really happy if you send us links to your projects where you use our component. Just send an email to sales@mindinventory.com And do let us know if you have any questions or suggestion regarding our work.
+ Example
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:vimeo_video_player/vimeo_video_player_custom.dart';
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            VimeoVideoPlayer(
+              url: 'https://vimeo.com/157743578',
+              onFinished: () => onFinishedVimeo(),
+            ),
+            VimeoVideoPlayer(
+              url: 'https://vimeo.com/740663286',
+              onFinished: () => onFinishedVimeo(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void onFinishedVimeo() {
+    print('onFinishedVimeo');
+  }
+}
+```
+
