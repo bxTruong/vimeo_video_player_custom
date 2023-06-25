@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vimeo_video_player/vimeo_video_player_custom.dart';
+import 'package:vimeo_video_player_custom/vimeo_video_player_custom.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,6 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void onFinishedVimeo() {
-    print('onFinishedVimeo');
+    debugPrint('onFinishedVimeo');
   }
 }

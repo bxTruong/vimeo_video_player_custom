@@ -16,7 +16,7 @@ class _SheetQualityCompState extends State<SheetQualityComp> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-        padding: EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         shrinkWrap: true,
         itemBuilder: _itemBuilder,
         separatorBuilder: (_, __) => const SizedBox(height: 0),

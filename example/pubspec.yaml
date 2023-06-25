@@ -41,7 +41,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  vimeo_video_player:
+  vimeo_video_player_custom:
     path: ../
 
   # The "flutter_lints" package below contains a set of recommended lints to
