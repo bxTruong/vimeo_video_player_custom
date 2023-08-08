@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
-import 'component/sheet_quality_comp.dart';
-import 'model/vimeo_video_config.dart';
 import 'package:collection/collection.dart';
+import 'package:vimeo_video_player_custom/vimeo_video_player_custom.dart';
 
 class VimeoVideoPlayer extends StatefulWidget {
   /// vimeo video url
@@ -89,9 +88,9 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
   /// used to check that the video is already seeked or not
   bool _isSeekedVideo = false;
 
-  List<VimeoProgressive?> vimeoProgressiveList = [];
+  List<ProgressiveModel?> vimeoProgressiveList = [];
 
-  VimeoProgressive? vimeoProgressiveSelected;
+  ProgressiveModel? vimeoProgressiveSelected;
 
   @override
   void initState() {

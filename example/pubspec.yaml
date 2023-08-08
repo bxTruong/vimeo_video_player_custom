@@ -41,8 +41,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+
+
+
   vimeo_video_player_custom:
     path: ../
+  vimeo_player_flutter: ^0.0.3+2
+  webview_flutter: ^3.0.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../model/vimeo_video_config.dart';
+import 'package:vimeo_video_player_custom/vimeo_video_player_custom.dart';
 
 class SheetQualityComp extends StatefulWidget {
-  final List<VimeoProgressive?> vimeoProgressiveList;
-  final VimeoProgressive? vimeoProgressiveSelected;
+  final List<ProgressiveModel?> vimeoProgressiveList;
+  final ProgressiveModel? vimeoProgressiveSelected;
 
   const SheetQualityComp({Key? key, required this.vimeoProgressiveList, this.vimeoProgressiveSelected}) : super(key: key);
 
@@ -49,5 +49,5 @@ class _SheetQualityCompState extends State<SheetQualityComp> {
         onTap: () => _onPressItemQuality(widget.vimeoProgressiveList[index]));
   }
 
-  void _onPressItemQuality(VimeoProgressive? vimeoProgressive) => Navigator.pop(context, vimeoProgressive);
+  void _onPressItemQuality(ProgressiveModel? progressiveModel) => Navigator.pop(context, progressiveModel);
 }

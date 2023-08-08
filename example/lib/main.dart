@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:vimeo_video_player_custom/vimeo_video_player_custom.dart';
+import 'package:vimeo_player_flutter/vimeo_player_flutter.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -41,11 +43,15 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             VimeoVideoPlayer(
-              url: 'https://vimeo.com/157743578',
+              url: 'https://vimeo.com/70591644',
               onFinished: () => onFinishedVimeo(),
             ),
             VimeoVideoPlayer(
               url: 'https://vimeo.com/740663286',
+              onFinished: () => onFinishedVimeo(),
+            ),
+            VimeoVideoPlayer(
+              url: 'https://vimeo.com/850092726',
               onFinished: () => onFinishedVimeo(),
             ),
           ],
