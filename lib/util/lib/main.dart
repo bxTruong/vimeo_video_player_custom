@@ -20,7 +20,7 @@ Future<void> recursive(Directory dir) async {
   int index = dir.path.replaceAll('\\', '/').indexOf('/lib');
 
   for (var element in files) {
-    String path = element.path.replaceAll('\\', '/').replaceRange(0, index + 4, '');
+    String path = element.path.replaceAll('\\', '/').replaceRange(0, index + 4, '.');
     if (path.contains('util/')) break;
     data.add('export \'$path\';');
     print(path);

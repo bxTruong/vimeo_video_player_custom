@@ -107,6 +107,7 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
 
   @override
   void deactivate() {
+    _flickManager?.flickControlManager?.pause();
     _videoPlayerController?.pause();
     super.deactivate();
   }
@@ -115,6 +116,9 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
   void dispose() {
     /// disposing the controllers
     _flickManager?.dispose();
+    if (_videoPlayerController?.value.isPlaying ?? false) _videoPlayerController?.pause();
+    _videoPlayerController?.removeListener(() {});
+    _videoPlayerController = null;
     _videoPlayerController?.dispose();
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.manual,
@@ -273,10 +277,14 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
     required String vimeoVideoId,
   }) async {
     try {
-      Response responseData = await Dio().get(
-        'https://api.vimeo.com/videos/$vimeoVideoId?fields=play.progressive',
-        options: Options(headers: {'Authorization': 'bearer ${widget.accessToken}'})
-      );
+      Response responseData = await Dio().get('https://api.vimeo.com/videos/$vimeoVideoId?fields=play.progressive',
+          options: Options(
+            headers: {
+              'Authorization': 'bearer ${widget.accessToken}',
+            },
+            receiveTimeout: const Duration(milliseconds: 30000),
+            sendTimeout: const Duration(milliseconds: 30000),
+          ));
       var vimeoVideo = VimeoModel.fromJson(responseData.data);
       return vimeoVideo;
     } on DioException catch (e) {
