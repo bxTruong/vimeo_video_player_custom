@@ -12,6 +12,9 @@ class VimeoVideoPlayer extends StatefulWidget {
   /// vimeo video url
   final String url;
 
+  /// access token
+  final String accessToken;
+
   /// hide/show device status-bar
   final List<SystemUiOverlay> systemUiOverlay;
 
@@ -38,6 +41,7 @@ class VimeoVideoPlayer extends StatefulWidget {
 
   const VimeoVideoPlayer({
     required this.url,
+    required this.accessToken,
     this.systemUiOverlay = const [
       SystemUiOverlay.top,
       SystemUiOverlay.bottom,
@@ -270,7 +274,8 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
   }) async {
     try {
       Response responseData = await Dio().get(
-        'https://player.vimeo.com/video/$vimeoVideoId/config',
+        'https://api.vimeo.com/videos/$vimeoVideoId?fields=play.progressive',
+        options: Options(headers: {'Authorization': 'bearer ${widget.accessToken}'})
       );
       var vimeoVideo = VimeoModel.fromJson(responseData.data);
       return vimeoVideo;

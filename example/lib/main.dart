@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vimeo_video_player_custom/vimeo_video_player_custom.dart';
-import 'package:vimeo_player_flutter/vimeo_player_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,16 +42,19 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             VimeoVideoPlayer(
-              url: 'https://vimeo.com/70591644',
+              url: 'https://vimeo.com/850781366',
               onFinished: () => onFinishedVimeo(),
+              accessToken: '6cb00ffe357899a72e2426296a0d227e',
             ),
             VimeoVideoPlayer(
               url: 'https://vimeo.com/740663286',
               onFinished: () => onFinishedVimeo(),
+              accessToken: '6cb00ffe357899a72e2426296a0d227e',
             ),
             VimeoVideoPlayer(
               url: 'https://vimeo.com/850092726',
               onFinished: () => onFinishedVimeo(),
+              accessToken: '6cb00ffe357899a72e2426296a0d227e',
             ),
           ],
         ),
