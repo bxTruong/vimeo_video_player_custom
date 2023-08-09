@@ -30,17 +30,17 @@ class _SheetQualityCompState extends State<SheetQualityComp> {
           child: Row(
             children: [
               Visibility(
-                visible: widget.vimeoProgressiveSelected?.quality == widget.vimeoProgressiveList[index]?.quality,
+                visible: widget.vimeoProgressiveSelected?.rendition == widget.vimeoProgressiveList[index]?.rendition,
                 child: const Padding(
                   padding: EdgeInsets.only(right: 16),
                   child: Icon(Icons.done, color: Colors.black),
                 ),
               ),
               Expanded(
-                  child: Text(widget.vimeoProgressiveList[index]?.quality?.toString() ?? 'null',
+                  child: Text(widget.vimeoProgressiveList[index]?.rendition?.toString() ?? 'null',
                       style: Theme.of(context).textTheme.bodyText2?.copyWith(
                           color: Colors.black,
-                          fontWeight: widget.vimeoProgressiveSelected?.quality == widget.vimeoProgressiveList[index]?.quality
+                          fontWeight: widget.vimeoProgressiveSelected?.rendition == widget.vimeoProgressiveList[index]?.rendition
                               ? FontWeight.bold
                               : FontWeight.normal)))
             ],

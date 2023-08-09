@@ -64,8 +64,7 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
   /// video player controller
   VideoPlayerController? _videoPlayerController;
 
-  final VideoPlayerController _emptyVideoPlayerController =
-      VideoPlayerController.network('');
+  final VideoPlayerController _emptyVideoPlayerController = VideoPlayerController.network('');
 
   /// flick manager to manage the flick player
   FlickManager? _flickManager;
@@ -126,9 +125,7 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
     if (startAt != null && _videoPlayerController != null) {
       _videoPlayerController!.addListener(() {
         final VideoPlayerValue videoData = _videoPlayerController!.value;
-        if (videoData.isInitialized &&
-            videoData.duration > startAt &&
-            !_isSeekedVideo) {
+        if (videoData.isInitialized && videoData.duration > startAt && !_isSeekedVideo) {
           _videoPlayerController!.seekTo(startAt);
           _isSeekedVideo = true;
         } // else ignore, incorrect value
@@ -140,8 +137,7 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
     final onProgressCallback = widget.onProgress;
     final onFinishCallback = widget.onFinished;
 
-    if (_videoPlayerController != null &&
-        (onProgressCallback != null || onFinishCallback != null)) {
+    if (_videoPlayerController != null && (onProgressCallback != null || onFinishCallback != null)) {
       _videoPlayerController!.addListener(() {
         final VideoPlayerValue videoData = _videoPlayerController!.value;
         if (videoData.isInitialized) {
@@ -173,21 +169,16 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
   void _videoPlayer() {
     /// getting the vimeo video configuration from api and setting managers
     _getVimeoVideoConfigFromUrl(widget.url).then((value) async {
-      vimeoProgressiveList = value?.request?.files?.progressive ?? [];
-      vimeoProgressiveList
-          .sort((a, b) => (a?.qualityInt ?? 0).compareTo((b?.qualityInt ?? 0)));
+      vimeoProgressiveList = value?.play?.progressive ?? [];
+      vimeoProgressiveList.sort((a, b) => (a?.qualityInt ?? 0).compareTo((b?.qualityInt ?? 0)));
       String vimeoMp4Video = '';
 
       if (vimeoProgressiveList.isNotEmpty) {
-        String? video720 = vimeoProgressiveList
-            .singleWhereOrNull((element) => element?.qualityInt == 720)
-            ?.url;
-        vimeoProgressiveSelected = video720 != null
-            ? vimeoProgressiveList
-                .singleWhereOrNull((element) => element?.qualityInt == 720)
-            : vimeoProgressiveList.last;
+        String? video720 = vimeoProgressiveList.singleWhereOrNull((element) => element?.qualityInt == 720)?.link;
+        vimeoProgressiveSelected =
+            video720 != null ? vimeoProgressiveList.singleWhereOrNull((element) => element?.qualityInt == 720) : vimeoProgressiveList.last;
 
-        vimeoMp4Video = video720 ?? (vimeoProgressiveList.last?.url ?? '');
+        vimeoMp4Video = video720 ?? (vimeoProgressiveList.last?.link ?? '');
         if (vimeoMp4Video.isEmpty || vimeoMp4Video == '') {
           showAlertDialog(context);
         }
@@ -199,15 +190,9 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
       _setVideoListeners();
 
       _flickManager = FlickManager(
-          videoPlayerController:
-              _videoPlayerController ?? _emptyVideoPlayerController,
+          videoPlayerController: _videoPlayerController ?? _emptyVideoPlayerController,
           autoPlay: widget.autoPlay,
-          additionalOptions: [
-            OptionModel(
-                name: 'Quality',
-                icon: Icons.hd_outlined,
-                onPressFeature: () => _onPressQualityOption())
-          ])
+          additionalOptions: [OptionModel(name: 'Quality', icon: Icons.hd_outlined, onPressFeature: () => _onPressQualityOption())])
         ..registerContext(context);
 
       isVimeoVideoLoaded.value = !isVimeoVideoLoaded.value;
@@ -225,17 +210,11 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
         child: isVideo
             ? FlickVideoPlayer(
                 key: ObjectKey(_flickManager),
-                flickManager: _flickManager ??
-                    FlickManager(
-                        videoPlayerController: _emptyVideoPlayerController,
-                        autoPlay: widget.autoPlay),
+                flickManager: _flickManager ?? FlickManager(videoPlayerController: _emptyVideoPlayerController, autoPlay: widget.autoPlay),
               )
             : LayoutBuilder(builder: (ctx, size) {
-                double aspectRatio = (size.maxHeight == double.infinity ||
-                        size.maxWidth == double.infinity)
-                    ? (_videoPlayerController?.value.isInitialized == true
-                        ? _videoPlayerController?.value.aspectRatio
-                        : (16 / 9))!
+                double aspectRatio = (size.maxHeight == double.infinity || size.maxWidth == double.infinity)
+                    ? (_videoPlayerController?.value.isInitialized == true ? _videoPlayerController?.value.aspectRatio : (16 / 9))!
                     : size.maxWidth / size.maxHeight;
                 return AspectRatio(
                   aspectRatio: aspectRatio,
@@ -259,7 +238,7 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
   }
 
   /// used to get valid vimeo video configuration
-  Future<VimeoVideoConfig?> _getVimeoVideoConfigFromUrl(
+  Future<VimeoModel?> _getVimeoVideoConfigFromUrl(
     String url, {
     bool trimWhitespaces = true,
   }) async {
@@ -286,14 +265,14 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
   }
 
   /// give vimeo video configuration from api
-  Future<VimeoVideoConfig?> _getVimeoVideoConfig({
+  Future<VimeoModel?> _getVimeoVideoConfig({
     required String vimeoVideoId,
   }) async {
     try {
       Response responseData = await Dio().get(
         'https://player.vimeo.com/video/$vimeoVideoId/config',
       );
-      var vimeoVideo = VimeoVideoConfig.fromJson(responseData.data);
+      var vimeoVideo = VimeoModel.fromJson(responseData.data);
       return vimeoVideo;
     } on DioException catch (e) {
       log('Dio Error : ', name: e.error.toString());
@@ -308,20 +287,13 @@ class _VimeoVideoPlayerState extends State<VimeoVideoPlayer> {
     Navigator.pop(context);
     dynamic response = await showModalBottomSheet(
         context: context,
-        builder: (context) => SheetQualityComp(
-            vimeoProgressiveList: vimeoProgressiveList,
-            vimeoProgressiveSelected: vimeoProgressiveSelected));
+        builder: (context) => SheetQualityComp(vimeoProgressiveList: vimeoProgressiveList, vimeoProgressiveSelected: vimeoProgressiveSelected));
     if (response == null) return;
     if (response == vimeoProgressiveSelected) return;
     vimeoProgressiveSelected = response;
-    Duration? duration =
-        await _flickManager?.flickVideoManager?.videoPlayerController?.position;
-    _videoPlayerController =
-        VideoPlayerController.network(vimeoProgressiveSelected?.url ?? '');
-    _flickManager?.handleChangeVideo(
-        _videoPlayerController ?? _emptyVideoPlayerController,
-        videoChangeDuration:duration ,
-        isKeepValueVideo: true);
+    Duration? duration = await _flickManager?.flickVideoManager?.videoPlayerController?.position;
+    _videoPlayerController = VideoPlayerController.network(vimeoProgressiveSelected?.link ?? '');
+    _flickManager?.handleChangeVideo(_videoPlayerController ?? _emptyVideoPlayerController, videoChangeDuration: duration, isKeepValueVideo: true);
     _flickManager?.flickControlManager?.togglePlay();
     setState(() {});
   }
